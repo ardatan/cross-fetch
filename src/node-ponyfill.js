@@ -3,27 +3,54 @@ const nodeMajor = parseInt(process.versions.node.split('.')[0])
 if (nodeMajor >= 16) {
   const undici = require('undici')
 
-  undici.fetch.ponyfill = true
+  const fetch = function (requestOrUrl, options) {
+    if (typeof requestOrUrl === 'string') {
+      return fetch(new Request(requestOrUrl, options))
+    }
+    requestOrUrl.headers = requestOrUrl.headers || new undici.Headers({})
+    requestOrUrl.headers.delete('connection')
+    return undici.fetch(requestOrUrl)
+  }
 
-  module.exports = exports = undici.fetch
-  exports.fetch = undici.fetch
+  function Request (requestOrUrl, options) {
+    if (typeof requestOrUrl === 'string') {
+      options = options || {}
+      options.headers = options.headers || {}
+      delete options.headers.connection
+      delete options.headers.Connection
+      return new undici.Request(requestOrUrl, options)
+    }
+    const newRequestObj = requestOrUrl.clone()
+    newRequestObj.headers = newRequestObj.headers || new undici.Headers({})
+    newRequestObj.headers.delete('connection')
+    return newRequestObj
+  }
+
+  fetch.ponyfill = true
+
+  module.exports = exports = fetch
+  exports.fetch = fetch
   exports.Headers = undici.Headers
-  exports.Request = undici.Request
+  exports.Request = Request
   exports.Response = undici.Response
 
   // Needed for TypeScript consumers without esModuleInterop.
-  exports.default = undici.fetch
+  exports.default = fetch
 } else {
   const nodeFetch = require('node-fetch')
   const realFetch = nodeFetch.default || nodeFetch
 
-  const fetch = function (url, options) {
-    // Support schemaless URIs on the server for parity with the browser.
-    // Ex: //github.com/ -> https://github.com/
-    if (/^\/\//.test(url)) {
-      url = 'https:' + url
+  const fetch = function (requestOrUrl, options) {
+    if (typeof requestOrUrl === 'string') {
+      // Support schemaless URIs on the server for parity with the browser.
+      // Ex: //github.com/ -> https://github.com/
+      if (/^\/\//.test(requestOrUrl)) {
+        requestOrUrl = 'https:' + requestOrUrl
+      }
+      return fetch(new nodeFetch.Request(requestOrUrl, options))
     }
-    return realFetch.call(this, url, options)
+    requestOrUrl.headers.set('Connection', 'keep-alive')
+    return realFetch(requestOrUrl)
   }
 
   fetch.ponyfill = true

@@ -5,7 +5,7 @@ declare const _Request: typeof Request;
 declare const _Response: typeof Response;
 declare const _Headers: typeof Headers;
 
-declare module "cross-fetch" {
+declare module "cross-undici-fetch" {
   export const fetch: typeof _fetch;
   export const Request: typeof _Request;
   export const Response: typeof _Response;
