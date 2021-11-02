@@ -1,6 +1,6 @@
 {
   "name": "cross-undici-fetch",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Universal WHATWG Fetch API for Node, Browsers and React Native",
   "homepage": "https://github.com/lquixada/cross-fetch",
   "main": "dist/node-ponyfill.js",
