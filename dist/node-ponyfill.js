@@ -12,7 +12,7 @@ if (nodeMajor >= 16) {
   exports.Response = undici.Response;
 
   // Needed for TypeScript consumers without esModuleInterop.
-  exports.default = fetch;
+  exports.default = undici.fetch;
 } else {
   const nodeFetch = require("node-fetch");
   const realFetch = nodeFetch.default || nodeFetch;
