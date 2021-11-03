@@ -33,6 +33,8 @@ if (nodeMajor >= 16) {
   exports.Headers = undici.Headers;
   exports.Request = Request;
   exports.Response = undici.Response;
+  exports.FormData = undici.FormData;
+  exports.AbortController = globalThis.AbortController;
 
   // Needed for TypeScript consumers without esModuleInterop.
   exports.default = fetch;
@@ -60,6 +62,12 @@ if (nodeMajor >= 16) {
   exports.Headers = nodeFetch.Headers;
   exports.Request = nodeFetch.Request;
   exports.Response = nodeFetch.Response;
+  
+  const abortControllerModule = require("abort-controller");
+  exports.AbortController = abortControllerModule.default || abortControllerModule;
+
+  const formDataModule = require("form-data");
+  exports.FormData = formDataModule.default || formDataModule;
 
   // Needed for TypeScript consumers without esModuleInterop.
   exports.default = fetch;
