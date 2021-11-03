@@ -1,6 +1,12 @@
-const nodeMajor = parseInt(process.versions.node.split(".")[0]);
+const [
+  nodeMajorStr,
+  nodeMinorStr
+] = process.versions.node.split('.');
 
-if (nodeMajor >= 16) {
+const nodeMajor = parseInt(nodeMajorStr);
+const nodeMinor = parseInt(nodeMinorStr);
+
+if (nodeMajor > 16 || (nodeMajor === 16 && nodeMinor >= 5)) {
   const undici = require("undici");
 
   const fetch = function (requestOrUrl, options) {
@@ -62,9 +68,10 @@ if (nodeMajor >= 16) {
   exports.Headers = nodeFetch.Headers;
   exports.Request = nodeFetch.Request;
   exports.Response = nodeFetch.Response;
-  
+
   const abortControllerModule = require("abort-controller");
-  exports.AbortController = abortControllerModule.default || abortControllerModule;
+  exports.AbortController =
+    abortControllerModule.default || abortControllerModule;
 
   const formDataModule = require("form-data");
   exports.FormData = formDataModule.default || formDataModule;
