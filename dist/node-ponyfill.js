@@ -42,6 +42,10 @@ if (nodeMajor > 16 || (nodeMajor === 16 && nodeMinor >= 5)) {
   exports.FormData = undici.FormData;
   exports.AbortController = globalThis.AbortController;
 
+  const streamsWeb = require("stream/web");
+
+  exports.ReadableStream = streamsWeb.ReadableStream;
+
   // Needed for TypeScript consumers without esModuleInterop.
   exports.default = fetch;
 } else {
@@ -75,6 +79,9 @@ if (nodeMajor > 16 || (nodeMajor === 16 && nodeMinor >= 5)) {
 
   const formDataModule = require("form-data");
   exports.FormData = formDataModule.default || formDataModule;
+
+  const readableStreamModule = require("./readable-stream");
+  exports.ReadableStream = readableStreamModule.default || readableStreamModule;
 
   // Needed for TypeScript consumers without esModuleInterop.
   exports.default = fetch;
